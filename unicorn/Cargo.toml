@@ -1,0 +1,41 @@
+[package]
+name = "unicorn"
+version = "0.1.0"
+edition = "2021"
+description = "Unicorn — a terminal UI for self-hosted git, powered by gitoxide."
+publish = false
+
+[[bin]]
+name = "unicorn"
+path = "src/main.rs"
+
+[dependencies]
+# --- TUI ---------------------------------------------------------------
+# Ratatui 0.30.x. The crate was modularized in 0.30 (ratatui-core /
+# ratatui-widgets / ratatui-crossterm live underneath it) but the `ratatui`
+# crate still re-exports everything an application needs, including the
+# `crossterm` backend, so this single dependency is enough for apps.
+ratatui = "0.30"
+# Re-exported by ratatui, but declared explicitly since we call crossterm
+# event/key APIs directly in the event loop.
+crossterm = "0.28"
+
+# --- Git -----------------------------------------------------------------
+# gitoxide's main library crate. `gix` is the entry point; it re-exports
+# the lower-level gix-* plumbing crates you need (gix-ref, gix-object, etc).
+gix = "0.84"
+
+# --- CLI / errors / misc -------------------------------------------------
+clap = { version = "4", features = ["derive"] }
+anyhow = "1"
+color-eyre = "0.6"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
+directories = "5"
+unicode-width = "0.2"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
